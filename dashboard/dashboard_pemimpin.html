@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Eksekutif | Kabupaten Lamongan</title>
+    <!-- Bootstrap 5, Font Awesome, jQuery, Chart.js, Socket.io -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+      /* Reset & Global */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background-color: #f4f7fc;
+        font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        background: linear-gradient(180deg, #0b2b3f 0%, #123e54 100%);
+        min-height: 100vh;
+        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
+      }
+      .sidebar .brand {
+        font-size: 1.5rem;
+        font-weight: 600;
+        padding: 1.5rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        text-align: center;
+      }
+      .sidebar .nav-link {
+        color: #e0f0f5;
+        font-weight: 500;
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+      }
+      .sidebar .nav-link:hover,
+      .sidebar .nav-link.active {
+        background-color: #f4a261;
+        color: #0b2b3f;
+      }
+      .sidebar .nav-link i {
+        width: 28px;
+        margin-right: 10px;
+        text-align: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        padding: 1.5rem 2rem;
+      }
+      .header-title h2 {
+        font-weight: 700;
+        color: #0a2e3f;
+      }
+      .header-title p {
+        color: #5f7f9c;
+        margin-bottom: 0;
+      }
+
+      /* Stat Cards */
+      .stat-card {
+        background: white;
+        border-radius: 24px;
+        padding: 1.2rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        height: 100%;
+        border: 1px solid #eef2f6;
+      }
+      .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+      }
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #0b2b3f;
+        line-height: 1.2;
+      }
+      .stat-label {
+        font-size: 0.9rem;
+        color: #5f7f9c;
+        font-weight: 500;
+      }
+      .trend-up {
+        background: #e2f3ea;
+        color: #2c9e6e;
+        padding: 0.2rem 0.6rem;
+        border-radius: 40px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-block;
+      }
+      .trend-warning {
+        background: #feede5;
+        color: #e67e22;
+        padding: 0.2rem 0.6rem;
+        border-radius: 40px;
+        font-size: 0.8rem;
+      }
+
+      /* Chart Cards */
+      .chart-card {
+        background: white;
+        border-radius: 24px;
+        padding: 1.2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        margin-bottom: 1.5rem;
+        border: 1px solid #eef2f6;
+      }
+      .chart-title {
+        font-weight: 700;
+        border-left: 5px solid #f4a261;
+        padding-left: 12px;
+        margin-bottom: 1rem;
+        color: #1e4a62;
+      }
+
+      /* Footer */
+      footer {
+        font-size: 0.8rem;
+        color: #7f8c8d;
+        border-top: 1px solid #e2e8f0;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        text-align: center;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .sidebar {
+          min-height: auto;
+          margin-bottom: 1rem;
+        }
+        .main-content {
+          padding: 1rem;
+        }
+        .stat-value {
+          font-size: 1.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid p-0">
+      <div class="row g-0">
+        <!-- SIDEBAR -->
+        <div class="col-md-3 col-lg-2 sidebar">
+          <div class="brand">
+            <i class="fas fa-chart-line me-2"></i> SiMonik LA <br /><small
+              style="font-size: 0.8rem"
+              >EKSEKUTIF</small
+            >
+          </div>
+          <nav class="nav flex-column mt-3">
+            <a class="nav-link active" href="dashboard_pemimpin.html"
+              ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+            >
+            <a class="nav-link" href="login.php"
+              ><i class="fas fa-building"></i> Admin OPD</a
+            >
+            <a class="nav-link" href="#"
+              ><i class="fas fa-file-alt"></i> Pelaporan</a
+            >
+          </nav>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="col-md-9 col-lg-10 main-content">
+          <div
+            class="header-title mb-4 d-flex justify-content-between align-items-center flex-wrap"
+          >
+            <div>
+              <h2>
+                <i class="fas fa-chalkboard-user me-2"></i> Dashboard Eksekutif
+              </h2>
+              <p>Sistem Monitoring Indikator Kinerja OPD Kabupaten Lamongan</p>
+            </div>
+          </div>
+
+          <!-- Filter Tahun -->
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Filter Tahun</label>
+              <select id="tahunFilter" class="form-select">
+                <!-- Opsi akan diisi oleh JavaScript -->
+              </select>
+            </div>
+          </div>
+
+          <script>
+            // Mengisi dropdown tahun dari tahun 2020 hingga tahun sekarang + 2
+            const currentYear = new Date().getFullYear();
+            const startYear = 2020;
+            const endYear = currentYear + 2;
+            const tahunSelect = document.getElementById("tahunFilter");
+            for (let year = endYear; year >= startYear; year--) {
+              const option = document.createElement("option");
+              option.value = year;
+              option.textContent = year;
+              if (year === 2024) option.selected = true; // set default tahun 2024
+              tahunSelect.appendChild(option);
+            }
+          </script>
+
+          <!-- Kartu Statistik -->
+          <div class="row g-4 mb-5">
+            <div class="col-sm-6 col-lg-3">
+              <div class="stat-card">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <div class="stat-value" id="totalOPD">-</div>
+                    <div class="stat-label">Organisasi Perangkat Daerah</div>
+                  </div>
+                  <div class="stat-icon">
+                    <i class="fas fa-landmark fa-2x"></i>
+                  </div>
+                </div>
+                <div class="mt-2">
+                  <span class="trend-up"
+                    ><i class="fas fa-arrow-up"></i> +5.2%</span
+                  >
+                  <span class="text-muted ms-2">kinerja terdaftar</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <div class="stat-card">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <div class="stat-value" id="totalIndikator">-</div>
+                    <div class="stat-label">Indikator Kinerja terdaftar</div>
+                  </div>
+                  <div class="stat-icon">
+                    <i class="fas fa-list-check fa-2x"></i>
+                  </div>
+                </div>
+                <div class="mt-2">
+                  <span class="trend-up"
+                    ><i class="fas fa-chart-line"></i> aktif semua</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <div class="stat-card">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <div class="stat-value" id="rataCapaian">-</div>
+                    <div class="stat-label">Rata-rata Capaian</div>
+                  </div>
+                  <div class="stat-icon">
+                    <i class="fas fa-percent fa-2x"></i>
+                  </div>
+                </div>
+                <div class="mt-2">
+                  <span class="trend-up"
+                    ><i class="fas fa-arrow-up"></i> Target: +2.3%</span
+                  >
+                  <span class="badge bg-success ms-2">90% goal</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <div class="stat-card">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <div class="stat-value" id="opdBelumLapor">-</div>
+                    <div class="stat-label">OPD Belum Laporan</div>
+                  </div>
+                  <div class="stat-icon">
+                    <i class="fas fa-clock fa-2x"></i>
+                  </div>
+                </div>
+                <div class="mt-2">
+                  <span class="trend-warning"
+                    ><i class="fas fa-exclamation-triangle"></i> Deadline: 15
+                    Januari 2024</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grafik Area -->
+          <div class="row g-4">
+            <div class="col-lg-7">
+              <div class="chart-card">
+                <div class="chart-title">
+                  <i class="fas fa-chart-line me-2"></i> Trend Capaian Kinerja
+                </div>
+                <p class="text-muted small">
+                  Perbandingan capaian vs target 6 bulan terakhir (data contoh)
+                </p>
+                <canvas
+                  id="trendChart"
+                  style="max-height: 280px; width: 100%"
+                ></canvas>
+              </div>
+            </div>
+            <div class="col-lg-5">
+              <div class="chart-card">
+                <div class="chart-title">
+                  <i class="fas fa-chart-pie me-2"></i> Status Pelaporan OPD
+                </div>
+                <p class="text-muted small">
+                  Ketepatan waktu pelaporan (data contoh)
+                </p>
+                <canvas
+                  id="reportChart"
+                  style="max-height: 280px; width: 100%"
+                ></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <div class="chart-card">
+                <div class="chart-title">
+                  <i class="fas fa-chart-simple"></i> Capaian per OPD
+                </div>
+                <canvas
+                  id="opdChart"
+                  style="height: 250px; width: 100%"
+                ></canvas>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="chart-card">
+                <div class="chart-title">
+                  <i class="fas fa-table-list"></i> Detail Program
+                </div>
+                <div style="max-height: 300px; overflow-y: auto">
+                  <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Program</th>
+                        <th>OPD</th>
+                        <th>Capaian</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tabelRingkasan"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer>
+            <i class="fas fa-chart-simple"></i> Dashboard Kinerja Pemerintah
+            Kabupaten Lamongan • Data real-time dari API • Terakhir diperbarui:
+            <span id="lastUpdate"></span>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ---------- Variabel Global ----------
+      let trendChart, reportChart, opdChart;
+      const socket = io("http://localhost:3000");
+
+      // Data dummy untuk trend & status (karena API tidak menyediakan bulanan)
+      const dummyTrendData = {
+        labels: [
+          "Jul 2024",
+          "Agu 2024",
+          "Sep 2024",
+          "Okt 2024",
+          "Nov 2024",
+          "Des 2024",
+        ],
+        capaian: [78, 82, 84.5, 86, 85, 88.2],
+        target: [80, 80, 85, 85, 87, 90],
+      };
+      const dummyReport = { tepatWaktu: 8, terlambat: 2 };
+
+      // ---------- Helper Functions ----------
+      function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function (m) {
+          if (m === "&") return "&amp;";
+          if (m === "<") return "&lt;";
+          if (m === ">") return "&gt;";
+          return m;
+        });
+      }
+
+      // ---------- Grafik Capaian per OPD (Bar Chart) ----------
+      function updateOPDChart(tahun) {
+        $.ajax({
+          url: `http://localhost:3000/api/dashboard/summary?tahun=${tahun}`,
+          success: function (summary) {
+            if (opdChart) opdChart.destroy();
+            const ctx = document.getElementById("opdChart").getContext("2d");
+            opdChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: summary.map((s) => s.opd),
+                datasets: [
+                  {
+                    label: "Persentase Capaian (%)",
+                    data: summary.map((s) => s.persentase),
+                    backgroundColor: "#2c6e9e",
+                    borderRadius: 8,
+                    barPercentage: 0.7,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                  y: {
+                    max: 100,
+                    title: {
+                      display: true,
+                      text: "Persentase (%)",
+                      color: "#4a627a",
+                    },
+                    grid: { color: "#e9ecef" },
+                  },
+                  x: {
+                    ticks: { autoSkip: true, maxRotation: 45, minRotation: 30 },
+                  },
+                },
+                plugins: {
+                  tooltip: {
+                    callbacks: { label: (ctx) => `${ctx.raw.toFixed(1)}%` },
+                  },
+                },
+              },
+            });
+          },
+          error: function () {
+            console.error("Gagal mengambil data summary");
+          },
+        });
+      }
+
+      // ---------- Muat Semua Data Dashboard ----------
+      function loadDashboard(tahun) {
+        $.ajax({
+          url: `http://localhost:3000/api/kinerja?tahun=${tahun}`,
+          success: function (data) {
+            // 1. Statistik
+            const totalProgram = data.length;
+            const totalTarget = data.reduce((s, i) => s + i.target, 0);
+            const totalRealisasi = data.reduce((s, i) => s + i.realisasi, 0);
+            const rataCapaian = totalTarget
+              ? ((totalRealisasi / totalTarget) * 100).toFixed(1)
+              : 0;
+
+            const opdSet = new Set(data.map((item) => item.opd));
+            const totalOPD = opdSet.size;
+
+            // Hitung OPD dengan capaian rata-rata < 60% (dianggap belum laporan)
+            const opdCapaian = {};
+            data.forEach((item) => {
+              const cap = (item.realisasi / item.target) * 100;
+              if (!opdCapaian[item.opd]) opdCapaian[item.opd] = [];
+              opdCapaian[item.opd].push(cap);
+            });
+            let opdRendah = 0;
+            for (let opd in opdCapaian) {
+              const avgCap =
+                opdCapaian[opd].reduce((a, b) => a + b, 0) /
+                opdCapaian[opd].length;
+              if (avgCap < 60) opdRendah++;
+            }
+
+            $("#totalOPD").text(totalOPD);
+            $("#totalIndikator").text(totalProgram);
+            $("#rataCapaian").text(rataCapaian + "%");
+            $("#opdBelumLapor").text(opdRendah);
+
+            // 2. Tabel ringkasan (5 program pertama)
+            let html = "";
+            data.slice(0, 5).forEach((item) => {
+              let persen = ((item.realisasi / item.target) * 100).toFixed(1);
+              let warna =
+                persen >= 80 ? "success" : persen >= 60 ? "warning" : "danger";
+              html += `<tr>
+            <td>${escapeHtml(item.nama_program)}</td>
+            <td>${escapeHtml(item.opd)}</td>
+            <td class="bg-${warna} text-white">${persen}%</td>
+          </tr>`;
+            });
+            if (data.length === 0)
+              html =
+                '<tr><td colspan="3" class="text-center">Tidak ada data</td></tr>';
+            $("#tabelRingkasan").html(html);
+
+            // 3. Update grafik OPD (summary)
+            updateOPDChart(tahun);
+            $("#lastUpdate").text(new Date().toLocaleString());
+          },
+          error: function (xhr) {
+            console.error("Gagal load data kinerja", xhr);
+          },
+        });
+      }
+
+      // ---------- Inisialisasi Grafik Dummy (Trend & Status) ----------
+      function initDummyCharts() {
+        // Trend line chart
+        const ctxTrend = document.getElementById("trendChart").getContext("2d");
+        trendChart = new Chart(ctxTrend, {
+          type: "line",
+          data: {
+            labels: dummyTrendData.labels,
+            datasets: [
+              {
+                label: "Capaian (%)",
+                data: dummyTrendData.capaian,
+                borderColor: "#2c6e9e",
+                backgroundColor: "rgba(44,110,158,0.05)",
+                borderWidth: 3,
+                pointRadius: 4,
+                pointBackgroundColor: "#f4a261",
+                tension: 0.3,
+                fill: true,
+              },
+              {
+                label: "Target (%)",
+                data: dummyTrendData.target,
+                borderColor: "#e67e22",
+                borderWidth: 2.5,
+                borderDash: [6, 8],
+                pointRadius: 3,
+                pointBackgroundColor: "#e67e22",
+                tension: 0.2,
+                fill: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { tooltip: { mode: "index", intersect: false } },
+            scales: {
+              y: {
+                min: 65,
+                max: 100,
+                title: { display: true, text: "Persentase (%)" },
+              },
+            },
+          },
+        });
+
+        // Status pelaporan (doughnut)
+        const ctxReport = document
+          .getElementById("reportChart")
+          .getContext("2d");
+        reportChart = new Chart(ctxReport, {
+          type: "doughnut",
+          data: {
+            labels: ["Tepat Waktu (8 OPD)", "Terlambat (2 OPD)"],
+            datasets: [
+              {
+                data: [dummyReport.tepatWaktu, dummyReport.terlambat],
+                backgroundColor: ["#2c9e6e", "#e67e22"],
+                borderWidth: 0,
+                hoverOffset: 8,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: "60%",
+            plugins: {
+              legend: { position: "bottom" },
+              tooltip: {
+                callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw} OPD` },
+              },
+            },
+          },
+        });
+      }
+
+      // ---------- Event & Socket ----------
+      $("#tahunFilter").change(function () {
+        loadDashboard($(this).val());
+      });
+
+      socket.on("data-updated", () => {
+        // Refresh data dengan tahun yang sedang dipilih
+        loadDashboard($("#tahunFilter").val());
+      });
+
+      $(document).ready(function () {
+        initDummyCharts();
+        loadDashboard(2024); // tahun default
+      });
+    </script>
+  </body>
+</html>
