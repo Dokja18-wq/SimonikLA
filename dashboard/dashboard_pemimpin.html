@@ -177,7 +177,7 @@
             <a class="nav-link" href="login.php"
               ><i class="fas fa-building"></i> Admin OPD</a
             >
-            <a class="nav-link" href="#"
+            <a class="nav-link" href="pelaporan.html"
               ><i class="fas fa-file-alt"></i> Pelaporan</a
             >
           </nav>
@@ -377,6 +377,7 @@
     <script>
       // ---------- Variabel Global ----------
       let trendChart, reportChart, opdChart;
+      console.log("SOCKET URL:", "http://localhost:3000");
       const socket = io("http://localhost:3000");
 
       // Data dummy untuk trend & status (karena API tidak menyediakan bulanan)
@@ -408,7 +409,7 @@
       // ---------- Grafik Capaian per OPD (Bar Chart) ----------
       function updateOPDChart(tahun) {
         $.ajax({
-          url: `http://localhost:3000/api/dashboard/summary?tahun=${tahun}`,
+          url: `http://localhost:3000/api/kinerja?tahun=${tahun}`,
           success: function (summary) {
             if (opdChart) opdChart.destroy();
             const ctx = document.getElementById("opdChart").getContext("2d");

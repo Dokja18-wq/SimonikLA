@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pelaporan</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+
+      .toolbar {
+        margin-bottom: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+
+      th {
+        background: #0d3b5a;
+        color: white;
+      }
+
+      button {
+        padding: 8px 15px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Laporan Kinerja OPD</h2>
+
+    <div class="toolbar">
+      <select id="tahun">
+        <option value="2024">2024</option>
+        <option value="2025" selected>2025</option>
+        <option value="2026">2026</option>
+      </select>
+
+      <button onclick="loadData()">Tampilkan</button>
+
+      <button onclick="printLaporan()">Cetak</button>
+    </div>
+
+    <div id="areaCetak">
+      <table id="tabelLaporan">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>OPD</th>
+            <th>Program</th>
+            <th>Target</th>
+            <th>Realisasi</th>
+            <th>Triwulan</th>
+          </tr>
+        </thead>
+
+        <tbody id="tbodyLaporan"></tbody>
+      </table>
+    </div>
+
+    <script>
+      async function loadData() {
+        const tahun = document.getElementById("tahun").value;
+
+        const response = await fetch(
+          `http://localhost:3000/api/kinerja?tahun=${tahun}`,
+        );
+
+        const data = await response.json();
+
+        const tbody = document.getElementById("tbodyLaporan");
+
+        tbody.innerHTML = "";
+
+        data.forEach((item, index) => {
+          tbody.innerHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.opd}</td>
+                <td>${item.nama_program}</td>
+                <td>${item.target}</td>
+                <td>${item.realisasi}</td>
+                <td>${item.triwulan}</td>
+            </tr>
+        `;
+        });
+      }
+
+      function printLaporan() {
+        window.print();
+      }
+
+      loadData();
+    </script>
+  </body>
+</html>

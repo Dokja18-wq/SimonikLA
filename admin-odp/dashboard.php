@@ -292,7 +292,7 @@ $data = mysqli_query($conn, "SELECT * FROM kinerja WHERE opd='$opd' ORDER BY tah
             <nav class="nav flex-column mt-3">
                 <a class="nav-link" href="../dashboard/dashboard_pemimpin.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                 <a class="nav-link active" href="dashboard.php"><i class="fas fa-building"></i> OPD</a>
-                <a class="nav-link" href="#"><i class="fas fa-file-alt"></i> Pelaporan</a>
+                <a class="nav-link" href="../dashboard/pelaporan.html"><i class="fas fa-file-alt"></i> Pelaporan</a>
             </nav>
         </div>
 
