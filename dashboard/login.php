@@ -8,7 +8,7 @@ if(isset($_POST['login'])){
         $_SESSION['admin_opd'] = mysqli_fetch_assoc($query);
         header('Location: ../admin-odp/dashboard.php');
         exit;
-    } else $error = "Login gagal";
+    } else $error = "Kombinasi username atau password salah.";
 }
 ?>
 <!DOCTYPE html>
@@ -16,9 +16,12 @@ if(isset($_POST['login'])){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin OPD | SiMonik LA</title>
+    <title>Masuk | SiMonik LA</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -26,125 +29,151 @@ if(isset($_POST['login'])){
             box-sizing: border-box;
         }
         body {
-            background: linear-gradient(145deg, #0b2b3f 0%, #123e54 100%);
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: #0f172a;
         }
         .login-card {
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(2px);
-            border-radius: 36px;
-            padding: 2rem;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
             width: 100%;
-            max-width: 440px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255,255,255,0.4);
-            transition: all 0.3s;
+            max-width: 420px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
         }
-        .login-card:hover {
-            transform: translateY(-5px);
-        }
-        .brand-icon {
+        .brand-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
-        .brand-icon i {
-            font-size: 3.5rem;
-            background: linear-gradient(135deg, #f6d5a5, #f4a261);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        .brand-badge {
+            width: 48px;
+            height: 48px;
+            background-color: #eff6ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            border: 1px solid #dbeafe;
+        }
+        .brand-badge i {
+            font-size: 1.5rem;
+            color: #2563eb;
         }
         .login-title {
-            font-weight: 800;
-            color: #0f2b3f;
-            text-align: center;
-            letter-spacing: -0.3px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.025em;
         }
         .login-sub {
-            text-align: center;
-            color: #5f7f9c;
-            font-size: 0.9rem;
-            margin-bottom: 1.8rem;
+            color: #64748b;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
         }
         .form-label {
-            font-weight: 600;
-            color: #1e4a62;
-            margin-bottom: 0.4rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #334155;
+            margin-bottom: 0.5rem;
         }
         .form-control {
-            border-radius: 40px;
-            border: 1px solid #d7e4f3;
-            padding: 0.7rem 1.2rem;
-            background-color: #fefefe;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            padding: 0.625rem 0.875rem;
+            background-color: #ffffff;
+            font-size: 0.875rem;
+            color: #0f172a;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         }
         .form-control:focus {
-            border-color: #f4a261;
-            box-shadow: 0 0 0 3px rgba(244,162,97,0.2);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px #2563eb;
+            outline: 0;
+            background-color: #ffffff;
         }
         .btn-login {
-            background: linear-gradient(95deg, #f4a261, #e76f51);
-            border: none;
-            border-radius: 40px;
-            padding: 0.7rem;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: all 0.2s;
+            background-color: #2563eb;
+            border: 1px solid #2563eb;
+            border-radius: 8px;
+            padding: 0.625rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.15s ease;
             width: 100%;
-            color: white;
+            color: #ffffff;
+            margin-top: 0.5rem;
         }
         .btn-login:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.05);
+            background-color: #1d4ed8;
+            border-color: #1d4ed8;
         }
         .alert {
-            border-radius: 40px;
-            font-size: 0.9rem;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid #fecaca;
+            background-color: #fef2f2;
+            color: #991b1b;
+            margin-bottom: 1.5rem;
+        }
+        .alert-dismissible .btn-close {
+            padding: 0.9rem 1rem;
         }
         footer {
             text-align: center;
-            margin-top: 1.8rem;
-            font-size: 0.7rem;
-            color: #8aaec0;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 1.25rem;
         }
         footer i {
-            color: #f4a261;
+            color: #64748b;
         }
     </style>
 </head>
 <body>
 <div class="login-card">
-    <div class="brand-icon">
-        <i class="fas fa-chart-line"></i>
+    <div class="brand-container">
+        <div class="brand-badge">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <h3 class="login-title">SiMonik LA</h3>
+        <p class="login-sub">Sistem Monitoring Kinerja OPD<br>Kabupaten Lamongan</p>
     </div>
-    <h3 class="login-title">SiMonik LA</h3>
-    <p class="login-sub">Sistem Monitoring Kinerja OPD<br>Kabupaten Lamongan</p>
 
     <?php if(isset($error)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i> <?= $error ?>
+            <i class="fas fa-circle-exclamation me-1.5"></i> <?= $error ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
     <form method="post">
         <div class="mb-3">
-            <label class="form-label"><i class="fas fa-user me-1"></i> Username</label>
+            <label class="form-label">Username</label>
             <input type="text" name="username" class="form-control" placeholder="Masukkan username" required autofocus>
         </div>
         <div class="mb-4">
-            <label class="form-label"><i class="fas fa-lock me-1"></i> Password</label>
+            <label class="form-label">Password</label>
             <input type="password" name="password" class="form-control" placeholder="Masukkan password" required>
         </div>
         <button type="submit" name="login" class="btn-login">
-            <i class="fas fa-sign-in-alt me-2"></i> Masuk ke Dashboard
+            Masuk ke Dashboard
         </button>
     </form>
     <footer>
-        <i class="fas fa-database"></i> Data real-time • Terintegrasi dengan MongoDB
+        <i class="fas fa-circle-info me-1"></i> Data real-time sinkron dengan MySQL & MongoDB
     </footer>
 </div>
 

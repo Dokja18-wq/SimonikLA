@@ -11,8 +11,11 @@
     />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
@@ -24,353 +27,491 @@
         box-sizing: border-box;
       }
       body {
-        background-color: #f4f7fc;
-        font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+        background-color: #f8fafc;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        color: #0f172a;
+      }
+
+      /* Layout */
+      .app-layout {
+        display: flex;
+        min-height: 100vh;
       }
 
       /* Sidebar */
       .sidebar {
-        background: linear-gradient(180deg, #0b2b3f 0%, #123e54 100%);
-        min-height: 100vh;
-        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
+        width: 260px;
+        background-color: #0f172a;
+        border-right: 1px solid #1e293b;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
       }
       .sidebar .brand {
-        font-size: 1.5rem;
+        padding: 2rem 1.5rem;
+        border-bottom: 1px solid #1e293b;
+        color: #ffffff;
+      }
+      .sidebar .brand-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        line-height: 1.2;
+      }
+      .sidebar .brand-subtitle {
+        font-size: 0.75rem;
         font-weight: 600;
-        padding: 1.5rem 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        color: white;
-        text-align: center;
+        color: #94a3b8;
+        letter-spacing: 0.05em;
+        margin-top: 0.25rem;
+      }
+      .sidebar .nav-menu {
+        padding: 1.5rem 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
       }
       .sidebar .nav-link {
-        color: #e0f0f5;
+        display: flex;
+        align-items: center;
+        color: #94a3b8;
         font-weight: 500;
-        padding: 0.8rem 1.5rem;
-        border-radius: 12px;
-        transition: all 0.2s ease;
-      }
-      .sidebar .nav-link:hover,
-      .sidebar .nav-link.active {
-        background-color: #f4a261;
-        color: #0b2b3f;
+        font-size: 0.875rem;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.15s ease;
       }
       .sidebar .nav-link i {
-        width: 28px;
+        width: 20px;
         margin-right: 10px;
+        font-size: 1rem;
         text-align: center;
+      }
+      .sidebar .nav-link:hover {
+        background-color: #1e293b;
+        color: #f1f5f9;
+      }
+      .sidebar .nav-link.active {
+        background-color: #1e293b;
+        color: #ffffff;
+        border-left: 3px solid #2563eb;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        padding-left: 13px; /* compensate border width */
       }
 
       /* Main Content */
       .main-content {
-        padding: 1.5rem 2rem;
+        flex-grow: 1;
+        padding: 2rem 2.5rem;
+        overflow-y: auto;
       }
       .header-title h2 {
+        font-size: 1.75rem;
         font-weight: 700;
-        color: #0a2e3f;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.35rem;
       }
       .header-title p {
-        color: #5f7f9c;
+        color: #64748b;
+        font-size: 0.875rem;
         margin-bottom: 0;
+      }
+
+      /* Filter */
+      .filter-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      }
+      .filter-label {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.375rem;
+        display: block;
+      }
+      .form-select {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        color: #0f172a;
+      }
+      .form-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 1px #2563eb;
       }
 
       /* Stat Cards */
       .stat-card {
-        background: white;
-        border-radius: 24px;
-        padding: 1.2rem;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
-        transition:
-          transform 0.2s,
-          box-shadow 0.2s;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         height: 100%;
-        border: 1px solid #eef2f6;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
-      .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+      .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
       }
       .stat-value {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: #0b2b3f;
-        line-height: 1.2;
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        margin-bottom: 0.25rem;
       }
       .stat-label {
-        font-size: 0.9rem;
-        color: #5f7f9c;
+        font-size: 0.8125rem;
+        color: #64748b;
         font-weight: 500;
       }
-      .trend-up {
-        background: #e2f3ea;
-        color: #2c9e6e;
-        padding: 0.2rem 0.6rem;
-        border-radius: 40px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        display: inline-block;
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background-color: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #475569;
+        flex-shrink: 0;
       }
-      .trend-warning {
-        background: #feede5;
-        color: #e67e22;
-        padding: 0.2rem 0.6rem;
-        border-radius: 40px;
-        font-size: 0.8rem;
+      .stat-icon i {
+        font-size: 1.125rem;
+      }
+      .trend-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+      .trend-badge.trend-up {
+        background-color: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+      }
+      .trend-badge.trend-warning {
+        background-color: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fde68a;
+      }
+      .trend-meta {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-left: 0.35rem;
       }
 
       /* Chart Cards */
       .chart-card {
-        background: white;
-        border-radius: 24px;
-        padding: 1.2rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         margin-bottom: 1.5rem;
-        border: 1px solid #eef2f6;
+        height: auto;
       }
       .chart-title {
-        font-weight: 700;
-        border-left: 5px solid #f4a261;
-        padding-left: 12px;
-        margin-bottom: 1rem;
-        color: #1e4a62;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .chart-title i {
+        color: #2563eb;
+      }
+      .chart-subtitle {
+        color: #64748b;
+        font-size: 0.75rem;
+        margin-bottom: 1.25rem;
+      }
+
+      /* Tables */
+      .table-container {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .table {
+        margin-bottom: 0;
+      }
+      .table thead {
+        background-color: #f8fafc;
+      }
+      .table th {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 0.75rem 1rem;
+      }
+      .table td {
+        font-size: 0.875rem;
+        color: #334155;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 0.875rem 1rem;
+        vertical-align: middle;
+      }
+      .table tbody tr:last-child td {
+        border-bottom: none;
+      }
+      .status-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        display: inline-block;
+      }
+      .status-badge.status-success {
+        background-color: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+      }
+      .status-badge.status-warning {
+        background-color: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fde68a;
+      }
+      .status-badge.status-danger {
+        background-color: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fca5a5;
       }
 
       /* Footer */
       footer {
-        font-size: 0.8rem;
-        color: #7f8c8d;
+        font-size: 0.75rem;
+        color: #94a3b8;
         border-top: 1px solid #e2e8f0;
-        margin-top: 2rem;
-        padding-top: 1rem;
-        text-align: center;
+        margin-top: 2.5rem;
+        padding-top: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      footer i {
+        color: #64748b;
       }
 
       /* Responsive */
-      @media (max-width: 768px) {
+      @media (max-width: 992px) {
+        .app-layout {
+          flex-direction: column;
+        }
         .sidebar {
+          width: 100%;
           min-height: auto;
-          margin-bottom: 1rem;
+        }
+        .sidebar .brand {
+          padding: 1.25rem 1.5rem;
+        }
+        .sidebar .nav-menu {
+          flex-direction: row;
+          flex-wrap: wrap;
+          padding: 0.75rem;
+          gap: 0.5rem;
+        }
+        .sidebar .nav-link {
+          padding: 0.5rem 0.75rem;
+        }
+        .sidebar .nav-link.active {
+          border-left: none;
+          border-bottom: 3px solid #2563eb;
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+          padding-left: 0.75rem;
         }
         .main-content {
-          padding: 1rem;
-        }
-        .stat-value {
-          font-size: 1.8rem;
+          padding: 1.5rem;
         }
       }
     </style>
   </head>
   <body>
-    <div class="container-fluid p-0">
-      <div class="row g-0">
-        <!-- SIDEBAR -->
-        <div class="col-md-3 col-lg-2 sidebar">
-          <div class="brand">
-            <i class="fas fa-chart-line me-2"></i> SiMonik LA <br /><small
-              style="font-size: 0.8rem"
-              >EKSEKUTIF</small
-            >
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="brand">
+          <div class="brand-title"><i class="fas fa-chart-line text-blue-500 me-1"></i> SiMonik LA</div>
+          <div class="brand-subtitle">EKSEKUTIF</div>
+        </div>
+        <nav class="nav-menu">
+          <a class="nav-link active" href="dashboard_pemimpin.html">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </a>
+          <a class="nav-link" href="login.php">
+            <i class="fas fa-user-shield"></i> Admin OPD
+          </a>
+          <a class="nav-link" href="pelaporan.html">
+            <i class="fas fa-file-alt"></i> Pelaporan
+          </a>
+        </nav>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+          <div class="header-title">
+            <h2>Dashboard Eksekutif</h2>
+            <p>Sistem Monitoring Indikator Kinerja OPD Kabupaten Lamongan</p>
           </div>
-          <nav class="nav flex-column mt-3">
-            <a class="nav-link active" href="dashboard_pemimpin.html"
-              ><i class="fas fa-tachometer-alt"></i> Dashboard</a
-            >
-            <a class="nav-link" href="login.php"
-              ><i class="fas fa-building"></i> Admin OPD</a
-            >
-            <a class="nav-link" href="pelaporan.html"
-              ><i class="fas fa-file-alt"></i> Pelaporan</a
-            >
-          </nav>
+          <div class="filter-card">
+            <label class="filter-label">Filter Tahun Kerja</label>
+            <select id="tahunFilter" class="form-select">
+              <!-- Opsi akan diisi oleh JavaScript -->
+            </select>
+          </div>
         </div>
 
-        <!-- MAIN CONTENT -->
-        <div class="col-md-9 col-lg-10 main-content">
-          <div
-            class="header-title mb-4 d-flex justify-content-between align-items-center flex-wrap"
-          >
-            <div>
-              <h2>
-                <i class="fas fa-chalkboard-user me-2"></i> Dashboard Eksekutif
-              </h2>
-              <p>Sistem Monitoring Indikator Kinerja OPD Kabupaten Lamongan</p>
-            </div>
-          </div>
-
-          <!-- Filter Tahun -->
-          <div class="row mb-4">
-            <div class="col-md-3">
-              <label class="form-label fw-semibold">Filter Tahun</label>
-              <select id="tahunFilter" class="form-select">
-                <!-- Opsi akan diisi oleh JavaScript -->
-              </select>
-            </div>
-          </div>
-
-          <script>
-            // Mengisi dropdown tahun dari tahun 2020 hingga tahun sekarang + 2
-            const currentYear = new Date().getFullYear();
-            const startYear = 2020;
-            const endYear = currentYear + 2;
-            const tahunSelect = document.getElementById("tahunFilter");
-            for (let year = endYear; year >= startYear; year--) {
-              const option = document.createElement("option");
-              option.value = year;
-              option.textContent = year;
-              if (year === 2024) option.selected = true; // set default tahun 2024
-              tahunSelect.appendChild(option);
-            }
-          </script>
-
-          <!-- Kartu Statistik -->
-          <div class="row g-4 mb-5">
-            <div class="col-sm-6 col-lg-3">
-              <div class="stat-card">
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <div class="stat-value" id="totalOPD">-</div>
-                    <div class="stat-label">Organisasi Perangkat Daerah</div>
-                  </div>
-                  <div class="stat-icon">
-                    <i class="fas fa-landmark fa-2x"></i>
-                  </div>
+        <!-- Kartu Statistik -->
+        <div class="row g-4 mb-4">
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div>
+                  <div class="stat-value" id="totalOPD">-</div>
+                  <div class="stat-label">Organisasi Perangkat Daerah</div>
                 </div>
-                <div class="mt-2">
-                  <span class="trend-up"
-                    ><i class="fas fa-arrow-up"></i> +5.2%</span
-                  >
-                  <span class="text-muted ms-2">kinerja terdaftar</span>
+                <div class="stat-icon">
+                  <i class="fas fa-landmark"></i>
                 </div>
               </div>
-            </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="stat-card">
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <div class="stat-value" id="totalIndikator">-</div>
-                    <div class="stat-label">Indikator Kinerja terdaftar</div>
-                  </div>
-                  <div class="stat-icon">
-                    <i class="fas fa-list-check fa-2x"></i>
-                  </div>
-                </div>
-                <div class="mt-2">
-                  <span class="trend-up"
-                    ><i class="fas fa-chart-line"></i> aktif semua</span
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="stat-card">
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <div class="stat-value" id="rataCapaian">-</div>
-                    <div class="stat-label">Rata-rata Capaian</div>
-                  </div>
-                  <div class="stat-icon">
-                    <i class="fas fa-percent fa-2x"></i>
-                  </div>
-                </div>
-                <div class="mt-2">
-                  <span class="trend-up"
-                    ><i class="fas fa-arrow-up"></i> Target: +2.3%</span
-                  >
-                  <span class="badge bg-success ms-2">90% goal</span>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="stat-card">
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <div class="stat-value" id="opdBelumLapor">-</div>
-                    <div class="stat-label">OPD Belum Laporan</div>
-                  </div>
-                  <div class="stat-icon">
-                    <i class="fas fa-clock fa-2x"></i>
-                  </div>
-                </div>
-                <div class="mt-2">
-                  <span class="trend-warning"
-                    ><i class="fas fa-exclamation-triangle"></i> Deadline: 15
-                    Januari 2024</span
-                  >
-                </div>
+              <div>
+                <span class="trend-badge trend-up">
+                  <i class="fas fa-arrow-up"></i> +5.2%
+                </span>
+                <span class="trend-meta">kinerja terdaftar</span>
               </div>
             </div>
           </div>
-
-          <!-- Grafik Area -->
-          <div class="row g-4">
-            <div class="col-lg-7">
-              <div class="chart-card">
-                <div class="chart-title">
-                  <i class="fas fa-chart-line me-2"></i> Trend Capaian Kinerja
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div>
+                  <div class="stat-value" id="totalIndikator">-</div>
+                  <div class="stat-label">Indikator Kinerja Terdaftar</div>
                 </div>
-                <p class="text-muted small">
-                  Perbandingan capaian vs target 6 bulan terakhir (data contoh)
-                </p>
-                <canvas
-                  id="trendChart"
-                  style="max-height: 280px; width: 100%"
-                ></canvas>
+                <div class="stat-icon">
+                  <i class="fas fa-list-check"></i>
+                </div>
               </div>
-            </div>
-            <div class="col-lg-5">
-              <div class="chart-card">
-                <div class="chart-title">
-                  <i class="fas fa-chart-pie me-2"></i> Status Pelaporan OPD
-                </div>
-                <p class="text-muted small">
-                  Ketepatan waktu pelaporan (data contoh)
-                </p>
-                <canvas
-                  id="reportChart"
-                  style="max-height: 280px; width: 100%"
-                ></canvas>
+              <div>
+                <span class="trend-badge trend-up">
+                  <i class="fas fa-circle-check"></i> Aktif Semua
+                </span>
               </div>
             </div>
           </div>
-
-          <div class="row mt-3">
-            <div class="col-md-6">
-              <div class="chart-card">
-                <div class="chart-title">
-                  <i class="fas fa-chart-simple"></i> Capaian per OPD
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div>
+                  <div class="stat-value" id="rataCapaian">-</div>
+                  <div class="stat-label">Rata-rata Capaian Kinerja</div>
                 </div>
-                <canvas
-                  id="opdChart"
-                  style="height: 250px; width: 100%"
-                ></canvas>
+                <div class="stat-icon">
+                  <i class="fas fa-percent"></i>
+                </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <div class="chart-card">
-                <div class="chart-title">
-                  <i class="fas fa-table-list"></i> Detail Program
-                </div>
-                <div style="max-height: 300px; overflow-y: auto">
-                  <table class="table table-sm table-bordered">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Program</th>
-                        <th>OPD</th>
-                        <th>Capaian</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tabelRingkasan"></tbody>
-                  </table>
-                </div>
+              <div>
+                <span class="trend-badge trend-up">
+                  <i class="fas fa-arrow-up"></i> Target: +2.3%
+                </span>
+                <span class="trend-meta">90% goal</span>
               </div>
             </div>
           </div>
-
-          <footer>
-            <i class="fas fa-chart-simple"></i> Dashboard Kinerja Pemerintah
-            Kabupaten Lamongan • Data real-time dari API • Terakhir diperbarui:
-            <span id="lastUpdate"></span>
-          </footer>
         </div>
+
+        <!-- Grafik Area -->
+        <div class="row g-4 mb-4">
+          <div class="col-lg-7">
+            <div class="chart-card">
+              <h5 class="chart-title">
+                <i class="fas fa-chart-line"></i> Trend Capaian Kinerja
+              </h5>
+              <p class="chart-subtitle">
+                Perbandingan capaian vs target 6 bulan terakhir (data contoh)
+              </p>
+              <div style="position: relative; height: 260px; width: 100%;">
+                <canvas id="trendChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="chart-card">
+              <h5 class="chart-title">
+                <i class="fas fa-chart-pie"></i> Status Pelaporan OPD
+              </h5>
+              <p class="chart-subtitle">
+                Ketepatan waktu pelaporan (data contoh)
+              </p>
+              <div style="position: relative; height: 260px; width: 100%;">
+                <canvas id="reportChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="chart-card">
+              <h5 class="chart-title">
+                <i class="fas fa-chart-simple"></i> Capaian per OPD (%)
+              </h5>
+              <p class="chart-subtitle">Persentase capaian kinerja per masing-masing instansi</p>
+              <div style="position: relative; height: 260px; width: 100%;">
+                <canvas id="opdChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="chart-card">
+              <h5 class="chart-title">
+                <i class="fas fa-table-list"></i> Detail Program Kerja
+              </h5>
+              <p class="chart-subtitle">Daftar ringkasan capaian per program instansi</p>
+              <div class="table-container" style="max-height: 260px; overflow-y: auto">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>Program</th>
+                      <th>OPD</th>
+                      <th style="width: 100px; text-align: center;">Capaian</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabelRingkasan"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer>
+          <span><i class="fas fa-chart-simple me-1"></i> SiMonik LA • Pemerintah Kabupaten Lamongan</span>
+          <span>Terakhir diperbarui: <span id="lastUpdate" class="text-dark fw-medium"></span></span>
+        </footer>
       </div>
     </div>
 
@@ -409,7 +550,7 @@
       // ---------- Grafik Capaian per OPD (Bar Chart) ----------
       function updateOPDChart(tahun) {
         $.ajax({
-          url: `http://localhost:3000/api/kinerja?tahun=${tahun}`,
+          url: `http://localhost:3000/api/dashboard/summary?tahun=${tahun}`,
           success: function (summary) {
             if (opdChart) opdChart.destroy();
             const ctx = document.getElementById("opdChart").getContext("2d");
@@ -419,34 +560,57 @@
                 labels: summary.map((s) => s.opd),
                 datasets: [
                   {
-                    label: "Persentase Capaian (%)",
+                    label: "Capaian (%)",
                     data: summary.map((s) => s.persentase),
-                    backgroundColor: "#2c6e9e",
-                    borderRadius: 8,
-                    barPercentage: 0.7,
+                    backgroundColor: "#3b82f6",
+                    borderRadius: 4,
+                    barPercentage: 0.6,
                   },
                 ],
               },
               options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 scales: {
                   y: {
-                    max: 100,
-                    title: {
-                      display: true,
-                      text: "Persentase (%)",
-                      color: "#4a627a",
+                    suggestedMax: 100,
+                    min: 0,
+                    beginAtZero: true,
+                    border: { display: true, color: "#cbd5e1" },
+                    ticks: {
+                      font: { family: 'Inter', size: 11 },
+                      color: "#64748b",
+                      callback: function(value) { return value + "%"; }
                     },
-                    grid: { color: "#e9ecef" },
+                    grid: { color: "#f1f5f9" },
                   },
                   x: {
-                    ticks: { autoSkip: true, maxRotation: 45, minRotation: 30 },
+                    border: { display: true, color: "#cbd5e1" },
+                    ticks: { 
+                      font: { family: 'Inter', size: 10 },
+                      color: "#64748b",
+                      autoSkip: true, 
+                      maxRotation: 30, 
+                      minRotation: 0 
+                    },
+                    grid: { display: false }
                   },
                 },
                 plugins: {
+                  legend: { display: false },
                   tooltip: {
-                    callbacks: { label: (ctx) => `${ctx.raw.toFixed(1)}%` },
+                    backgroundColor: '#0f172a',
+                    titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+                    bodyFont: { family: 'Inter', size: 12 },
+                    padding: 8,
+                    cornerRadius: 6,
+                    callbacks: { 
+                      label: (ctx) => {
+                        const val = ctx.raw;
+                        if (val === null || val === undefined) return 'Capaian: -';
+                        return `Capaian: ${val.toFixed(1)}%`;
+                      }
+                    },
                   },
                 },
               },
@@ -474,46 +638,40 @@
             const opdSet = new Set(data.map((item) => item.opd));
             const totalOPD = opdSet.size;
 
-            // Hitung OPD dengan capaian rata-rata < 60% (dianggap belum laporan)
-            const opdCapaian = {};
-            data.forEach((item) => {
-              const cap = (item.realisasi / item.target) * 100;
-              if (!opdCapaian[item.opd]) opdCapaian[item.opd] = [];
-              opdCapaian[item.opd].push(cap);
-            });
-            let opdRendah = 0;
-            for (let opd in opdCapaian) {
-              const avgCap =
-                opdCapaian[opd].reduce((a, b) => a + b, 0) /
-                opdCapaian[opd].length;
-              if (avgCap < 60) opdRendah++;
-            }
-
             $("#totalOPD").text(totalOPD);
             $("#totalIndikator").text(totalProgram);
             $("#rataCapaian").text(rataCapaian + "%");
-            $("#opdBelumLapor").text(opdRendah);
 
             // 2. Tabel ringkasan (5 program pertama)
             let html = "";
             data.slice(0, 5).forEach((item) => {
               let persen = ((item.realisasi / item.target) * 100).toFixed(1);
-              let warna =
-                persen >= 80 ? "success" : persen >= 60 ? "warning" : "danger";
+              let statusClass =
+                persen >= 80 ? "status-success" : persen >= 60 ? "status-warning" : "status-danger";
               html += `<tr>
-            <td>${escapeHtml(item.nama_program)}</td>
-            <td>${escapeHtml(item.opd)}</td>
-            <td class="bg-${warna} text-white">${persen}%</td>
-          </tr>`;
+                <td class="fw-medium text-dark">${escapeHtml(item.nama_program)}</td>
+                <td>${escapeHtml(item.opd)}</td>
+                <td class="text-center"><span class="status-badge ${statusClass}">${persen}%</span></td>
+              </tr>`;
             });
             if (data.length === 0)
               html =
-                '<tr><td colspan="3" class="text-center">Tidak ada data</td></tr>';
+                '<tr><td colspan="3" class="text-center text-muted py-4">Tidak ada data program</td></tr>';
             $("#tabelRingkasan").html(html);
 
             // 3. Update grafik OPD (summary)
             updateOPDChart(tahun);
-            $("#lastUpdate").text(new Date().toLocaleString());
+
+            // 4. Update trend capaian
+            updateTrendChart(data);
+
+            // 5. Update status pelaporan
+            updateReportChart(data);
+            
+            // Format last update
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            $("#lastUpdate").text(timeStr + " WIB");
           },
           error: function (xhr) {
             console.error("Gagal load data kinerja", xhr);
@@ -521,49 +679,136 @@
         });
       }
 
-      // ---------- Inisialisasi Grafik Dummy (Trend & Status) ----------
+      // ---------- Update Grafik Trend Capaian Kinerja (Real Data) ----------
+      function updateTrendChart(data) {
+        const monthlyData = Array(12).fill(0).map(() => ({ target: 0, realisasi: 0 }));
+        let hasData = false;
+
+        data.forEach(item => {
+          let m = null;
+          if (item.bulan) {
+            m = item.bulan - 1;
+          } else if (item.triwulan) {
+            m = (item.triwulan * 3) - 1; // TW1 -> Maret, TW2 -> Juni, TW3 -> September, TW4 -> Desember
+          }
+          if (m !== null) {
+            monthlyData[m].target += item.target;
+            monthlyData[m].realisasi += item.realisasi;
+            hasData = true;
+          }
+        });
+
+        const labels = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+        const capaianData = [];
+        const targetData = [];
+
+        for (let i = 0; i < 12; i++) {
+          // Selalu tampilkan target 100% agar baseline target terlihat penuh sepanjang tahun
+          targetData.push(100);
+          if (monthlyData[i].target > 0) {
+            const cap = (monthlyData[i].realisasi / monthlyData[i].target) * 100;
+            capaianData.push(parseFloat(cap.toFixed(1)));
+          } else {
+            capaianData.push(null);
+          }
+        }
+
+        trendChart.data.labels = labels;
+        trendChart.data.datasets[0].data = capaianData;
+        trendChart.data.datasets[1].data = targetData;
+        trendChart.update();
+      }
+
+      // ---------- Update Grafik Status Pelaporan OPD (Doughnut Chart) ----------
+      function updateReportChart(data) {
+        const uniqueOPDs = new Set(data.map(item => item.opd));
+        const sudahInputCount = uniqueOPDs.size;
+        const belumInputCount = Math.max(0, 10 - sudahInputCount);
+
+        reportChart.data.labels = [`Sudah Input (${sudahInputCount})`, `Belum Input (${belumInputCount})`];
+        reportChart.data.datasets[0].data = [sudahInputCount, belumInputCount];
+        reportChart.update();
+      }
+
+      // ---------- Inisialisasi Grafik (Trend & Status) ----------
       function initDummyCharts() {
         // Trend line chart
         const ctxTrend = document.getElementById("trendChart").getContext("2d");
         trendChart = new Chart(ctxTrend, {
           type: "line",
           data: {
-            labels: dummyTrendData.labels,
+            labels: [],
             datasets: [
               {
-                label: "Capaian (%)",
-                data: dummyTrendData.capaian,
-                borderColor: "#2c6e9e",
-                backgroundColor: "rgba(44,110,158,0.05)",
-                borderWidth: 3,
-                pointRadius: 4,
-                pointBackgroundColor: "#f4a261",
-                tension: 0.3,
+                label: "Capaian",
+                data: [],
+                borderColor: "#2563eb",
+                backgroundColor: "rgba(37,99,235,0.02)",
+                borderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: "#2563eb",
+                pointBorderColor: "#ffffff",
+                pointBorderWidth: 1.5,
+                tension: 0.2,
                 fill: true,
+                spanGaps: true, // Hubungkan garis melewati bulan kosong agar grafik tidak terputus-putus
               },
               {
-                label: "Target (%)",
-                data: dummyTrendData.target,
-                borderColor: "#e67e22",
-                borderWidth: 2.5,
-                borderDash: [6, 8],
-                pointRadius: 3,
-                pointBackgroundColor: "#e67e22",
+                label: "Target",
+                data: [],
+                borderColor: "#94a3b8",
+                borderWidth: 1.5,
+                borderDash: [5, 5],
+                pointRadius: 0,
                 tension: 0.2,
                 fill: false,
+                spanGaps: true, // Hubungkan garis target
               },
             ],
           },
           options: {
             responsive: true,
-            maintainAspectRatio: true,
-            plugins: { tooltip: { mode: "index", intersect: false } },
+            maintainAspectRatio: false,
+            plugins: { 
+              legend: {
+                position: 'top',
+                labels: { font: { family: 'Inter', size: 11 }, boxWidth: 15 }
+              },
+              tooltip: { 
+                mode: "index", 
+                intersect: false,
+                backgroundColor: '#0f172a',
+                titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+                bodyFont: { family: 'Inter', size: 12 },
+                padding: 8,
+                cornerRadius: 6,
+                callbacks: { 
+                  label: (ctx) => {
+                    const val = ctx.raw;
+                    if (val === null || val === undefined) return `${ctx.dataset.label}: -`;
+                    return `${ctx.dataset.label}: ${val.toFixed(1)}%`;
+                  }
+                }
+              } 
+            },
             scales: {
               y: {
-                min: 65,
-                max: 100,
-                title: { display: true, text: "Persentase (%)" },
+                min: 0,
+                suggestedMax: 100, // Menggunakan suggestedMax agar skala otomatis menyesuaikan jika capaian > 100%
+                border: { display: true, color: "#cbd5e1" },
+                ticks: { 
+                  font: { family: 'Inter', size: 11 }, 
+                  color: "#64748b",
+                  callback: function(value) { return value + "%"; }
+                },
+                grid: { color: "#f1f5f9" }
               },
+              x: {
+                border: { display: true, color: "#cbd5e1" },
+                ticks: { font: { family: 'Inter', size: 11 }, color: "#64748b" },
+                grid: { display: false }
+              }
             },
           },
         });
@@ -575,28 +820,49 @@
         reportChart = new Chart(ctxReport, {
           type: "doughnut",
           data: {
-            labels: ["Tepat Waktu (8 OPD)", "Terlambat (2 OPD)"],
+            labels: ["Sudah Input", "Belum Input"],
             datasets: [
               {
-                data: [dummyReport.tepatWaktu, dummyReport.terlambat],
-                backgroundColor: ["#2c9e6e", "#e67e22"],
-                borderWidth: 0,
-                hoverOffset: 8,
+                data: [0, 10],
+                backgroundColor: ["#10b981", "#f59e0b"],
+                borderWidth: 2,
+                borderColor: "#ffffff",
+                hoverOffset: 4,
               },
             ],
           },
           options: {
             responsive: true,
-            maintainAspectRatio: true,
-            cutout: "60%",
+            maintainAspectRatio: false,
+            cutout: "75%",
             plugins: {
-              legend: { position: "bottom" },
+              legend: { 
+                position: "bottom",
+                labels: { font: { family: 'Inter', size: 11 }, boxWidth: 12 }
+              },
               tooltip: {
-                callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw} OPD` },
+                backgroundColor: '#0f172a',
+                titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+                bodyFont: { family: 'Inter', size: 12 },
+                padding: 8,
+                cornerRadius: 6,
+                callbacks: { label: (ctx) => ` ${ctx.label}: ${ctx.raw} OPD` },
               },
             },
           },
         });
+      }
+
+      function populateTahunFilter() {
+        const currentYear = new Date().getFullYear();
+        const startYear = 2020;
+        const endYear = currentYear + 2;
+        const $tahunSelect = $("#tahunFilter");
+        $tahunSelect.empty();
+        for (let year = endYear; year >= startYear; year--) {
+          const selected = (year === 2024) ? "selected" : "";
+          $tahunSelect.append(`<option value="${year}" ${selected}>${year}</option>`);
+        }
       }
 
       // ---------- Event & Socket ----------
@@ -610,6 +876,7 @@
       });
 
       $(document).ready(function () {
+        populateTahunFilter();
         initDummyCharts();
         loadDashboard(2024); // tahun default
       });

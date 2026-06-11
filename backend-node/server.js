@@ -146,9 +146,15 @@ app.get("/api/dashboard/summary", async (req, res) => {
           total_target: 1,
           total_realisasi: 1,
           persentase: {
-            $multiply: [
-              { $divide: ["$total_realisasi", "$total_target"] },
-              100,
+            $cond: [
+              { $eq: ["$total_target", 0] },
+              0,
+              {
+                $multiply: [
+                  { $divide: ["$total_realisasi", "$total_target"] },
+                  100,
+                ],
+              },
             ],
           },
         },

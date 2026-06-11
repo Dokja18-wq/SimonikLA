@@ -79,335 +79,473 @@ $data = mysqli_query($conn, "SELECT * FROM kinerja WHERE opd='$opd' ORDER BY tah
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin OPD - <?= htmlspecialchars($opd) ?></title>
-    <!-- Bootstrap 5, Font Awesome, Google Fonts -->
+    <!-- Bootstrap 5, Font Awesome, Google Fonts Inter -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Reset & Global */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
-            background: linear-gradient(145deg, #eef2f7 0%, #d9e2ec 100%);
-            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #0f172a;
         }
-        /* Sidebar style (mirip dashboard real-time) */
-        .sidebar {
-            background: rgba(15, 35, 55, 0.92);
-            backdrop-filter: blur(8px);
+
+        /* Layout */
+        .app-layout {
+            display: flex;
             min-height: 100vh;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
-            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: #0f172a;
+            border-right: 1px solid #1e293b;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
         }
         .sidebar .brand {
-            font-size: 1.6rem;
-            font-weight: 700;
-            padding: 1.8rem 1rem;
-            text-align: center;
-            background: linear-gradient(135deg, #f6d5a5, #f4a261);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            border-bottom: 1px solid rgba(255,255,255,0.15);
-            letter-spacing: -0.5px;
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid #1e293b;
+            color: #ffffff;
         }
-        .sidebar .brand small {
-            font-size: 0.7rem;
-            color: #aac8e0;
-            background: none;
-            -webkit-background-clip: unset;
-            background-clip: unset;
+        .sidebar .brand-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+        }
+        .sidebar .brand-subtitle {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #94a3b8;
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+        .sidebar .nav-menu {
+            padding: 1.5rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
         .sidebar .nav-link {
-            color: #e2edf7;
+            display: flex;
+            align-items: center;
+            color: #94a3b8;
             font-weight: 500;
-            padding: 0.75rem 1.8rem;
-            margin: 0.3rem 0.8rem;
-            border-radius: 40px;
-            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.15s ease;
         }
         .sidebar .nav-link i {
-            width: 28px;
-            font-size: 1.1rem;
+            width: 20px;
+            margin-right: 10px;
+            font-size: 1rem;
+            text-align: center;
         }
-        .sidebar .nav-link:hover,
+        .sidebar .nav-link:hover {
+            background-color: #1e293b;
+            color: #f1f5f9;
+        }
         .sidebar .nav-link.active {
-            background: rgba(244, 162, 97, 0.9);
-            color: #0b2b3f;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transform: translateX(4px);
+            background-color: #1e293b;
+            color: #ffffff;
+            border-left: 3px solid #2563eb;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            padding-left: 13px; /* compensate border width */
         }
-        /* Main content */
+
+        /* Main Content */
         .main-content {
-            padding: 2rem 2rem;
+            flex-grow: 1;
+            padding: 2rem 2.5rem;
+            overflow-y: auto;
         }
         .header-title h2 {
-            font-weight: 800;
-            background: linear-gradient(135deg, #1e4663, #0f2b3f);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.35rem;
         }
-        .btn-logout {
-            background: linear-gradient(95deg, #2c6e9e, #1e4a6e);
-            border: none;
-            border-radius: 40px;
-            padding: 0.5rem 1.4rem;
-            font-weight: 600;
-            color: white;
-            transition: 0.2s;
+        .header-title p {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 0;
         }
-        .btn-logout:hover {
-            transform: translateY(-2px);
-            background: #1e5a74;
-            color: white;
-        }
-        /* Card style */
+
+        /* Card styles */
         .card-modern {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 32px;
-            border: 1px solid rgba(255,255,255,0.6);
-            box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.12);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             overflow: hidden;
-            transition: 0.25s;
+            margin-bottom: 1.75rem;
         }
         .card-header-modern {
-            background: linear-gradient(135deg, #084094, #022257);
-            color: white;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            color: #0f172a;
             font-weight: 600;
+            font-size: 0.9375rem;
             padding: 1rem 1.5rem;
-            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .card-header-info {
-            background: linear-gradient(135deg, #084094, #022257);
-            color: white;
+        .card-header-modern i {
+            color: #2563eb;
+        }
+        .card-body-modern {
+            padding: 1.5rem;
+        }
+
+        /* Form elements */
+        .form-label {
+            font-size: 0.8125rem;
             font-weight: 600;
-            padding: 1rem 1.5rem;
+            color: #475569;
+            margin-bottom: 0.375rem;
         }
         .form-control, .form-select {
-            border-radius: 16px;
-            border: 1px solid #d7e4f3;
-            padding: 0.6rem 1rem;
-            transition: 0.2s;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            color: #0f172a;
+            transition: all 0.15s ease;
         }
         .form-control:focus, .form-select:focus {
-            border-color: #f4a261;
-            box-shadow: 0 0 0 3px rgba(244,162,97,0.2);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px #2563eb;
+            outline: 0;
         }
         .btn-save {
-            background: linear-gradient(95deg, #084094, #022257);
-            border: none;
-            border-radius: 40px;
-            padding: 0.6rem 1.8rem;
+            background-color: #2563eb;
+            border: 1px solid #2563eb;
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 0.5rem 1.25rem;
             font-weight: 600;
-            color: white;
-            transition: 0.2s;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.15s ease;
         }
         .btn-save:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.05);
+            background-color: #1d4ed8;
+            border-color: #1d4ed8;
+        }
+
+        /* Tables */
+        .table-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .table {
+            margin-bottom: 0;
         }
         .table thead {
-            background: #0d6efd;
-            color: white;
+            background-color: #f8fafc;
         }
-        .table thead th {
+        .table th {
+            font-size: 0.75rem;
             font-weight: 600;
-            border: none;
-            padding: 12px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem 1rem;
         }
-        .table tbody tr {
-            transition: 0.2s;
+        .table td {
+            font-size: 0.875rem;
+            color: #334155;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.875rem 1rem;
+            vertical-align: middle;
+        }
+        .table tbody tr:last-child td {
+            border-bottom: none;
         }
         .table tbody tr:hover {
-            background: #eef5ff;
+            background-color: #f8fafc;
         }
-        .persen {
-            font-weight: 700;
-            text-align: center;
-            border-radius: 20px;
-            padding: 4px 10px;
+
+        /* Status badges */
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
             display: inline-block;
-            min-width: 70px;
         }
-        .persen-success {
-            background: #198754;
-            color: white;
+        .status-badge.status-success {
+            background-color: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
         }
-        .persen-warning {
-            background: #ffc107;
-            color: black;
+        .status-badge.status-warning {
+            background-color: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
         }
-        .persen-danger {
-            background: #dc3545;
-            color: white;
+        .status-badge.status-danger {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
         }
-        .btn-edit, .btn-delete {
-            border-radius: 30px;
-            padding: 5px 12px;
-            margin: 0 3px;
+
+        /* Inline edit field */
+        .edit-input {
+            width: 80px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8125rem;
+            text-align: center;
         }
-        .btn-edit {
-            background: #011a6b;
-            border: none;
-            color: white;
+        .edit-input:focus {
+            border-color: #2563eb;
+            outline: 0;
         }
-        .btn-edit:hover {
-            background: #0343b9;
+        .btn-action-edit {
+            background-color: #2563eb;
+            border: 1px solid #2563eb;
+            color: #ffffff;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            transition: all 0.15s ease;
         }
-        .btn-delete {
-            background: #dc3545;
-            border: none;
+        .btn-action-edit:hover {
+            background-color: #1d4ed8;
+            border-color: #1d4ed8;
         }
+        .btn-action-delete {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+        .btn-action-delete:hover {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Footer */
         footer {
             font-size: 0.75rem;
-            color: #5b7a99;
+            color: #94a3b8;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 2.5rem;
+            padding-top: 1.25rem;
             text-align: center;
-            padding-top: 1rem;
-            margin-top: 2rem;
-            border-top: 1px solid rgba(100, 130, 150, 0.3);
         }
-        @media (max-width: 768px) {
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .app-layout {
+                flex-direction: column;
+            }
             .sidebar {
+                width: 100%;
                 min-height: auto;
-                margin-bottom: 1rem;
+            }
+            .sidebar .brand {
+                padding: 1.25rem 1.5rem;
+            }
+            .sidebar .nav-menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+                padding: 0.75rem;
+                gap: 0.5rem;
+            }
+            .sidebar .nav-link {
+                padding: 0.5rem 0.75rem;
+            }
+            .sidebar .nav-link.active {
+                border-left: none;
+                border-bottom: 3px solid #2563eb;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                padding-left: 0.75rem;
             }
             .main-content {
-                padding: 1rem;
+                padding: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-<div class="container-fluid p-0">
-    <div class="row g-0">
-        <!-- SIDEBAR (sama dengan dashboard real-time) -->
-        <div class="col-md-3 col-lg-2 sidebar">
-            <div class="brand">
-                <i class="fas fa-chart-line me-2"></i> SiMonik LA
-                <br><small>ADMIN OPD</small>
-            </div>
-            <nav class="nav flex-column mt-3">
-                <a class="nav-link" href="../dashboard/dashboard_pemimpin.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                <a class="nav-link active" href="dashboard.php"><i class="fas fa-building"></i> OPD</a>
-                <a class="nav-link" href="../dashboard/pelaporan.html"><i class="fas fa-file-alt"></i> Pelaporan</a>
-            </nav>
+<div class="app-layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <div class="brand-title"><i class="fas fa-chart-line text-blue-500 me-1"></i> SiMonik LA</div>
+            <div class="brand-subtitle">ADMIN OPD</div>
+        </div>
+        <nav class="nav-menu">
+            <a class="nav-link" href="../dashboard/dashboard_pemimpin.html">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a class="nav-link active" href="dashboard.php">
+                <i class="fas fa-building"></i> OPD
+            </a>
+            <a class="nav-link" href="../dashboard/pelaporan.html">
+                <i class="fas fa-file-alt"></i> Pelaporan
+            </a>
+        </nav>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="header-title mb-4">
+            <h2>Panel Admin OPD</h2>
+            <p>Selamat datang, <span class="fw-semibold text-dark"><?= htmlspecialchars($opd) ?></span> • Silakan kelola data capaian kinerja instansi Anda</p>
         </div>
 
-        <!-- MAIN CONTENT -->
-        <div class="col-md-9 col-lg-10 main-content">
-            <div class="header-title mb-4 d-flex justify-content-between align-items-center flex-wrap">
-                <div>
-                    <h2><i class="fas fa-user-shield me-2"></i> Panel Admin OPD</h2>
-                    <p class="text-muted">Selamat datang, <?= htmlspecialchars($opd) ?> • Kelola data capaian kinerja</p>
-                </div>
+        <!-- Form Tambah Capaian -->
+        <div class="card-modern">
+            <div class="card-header-modern">
+                <i class="fas fa-plus-circle"></i> Tambah Capaian Kinerja Baru
             </div>
-
-            <!-- Form Tambah Capaian -->
-            <div class="card-modern mb-4">
-                <div class="card-header-modern">
-                    <i class="fas fa-plus-circle me-2"></i> Tambah Capaian Kinerja (Bulanan/Triwulan)
-                </div>
-                <div class="card-body p-4">
-                    <form method="post">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">Nama Program</label>
-                                <input type="text" name="nama_program" class="form-control" placeholder="Contoh: Peningkatan Pelayanan Publik" required>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label fw-semibold">Target</label>
-                                <input type="number" name="target" class="form-control" placeholder="Target" required>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label fw-semibold">Realisasi</label>
-                                <input type="number" name="realisasi" class="form-control" placeholder="Realisasi" required>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label fw-semibold">Tahun</label>
-                                <input type="number" name="tahun" class="form-control" placeholder="Tahun" required>
-                            </div>
-                            <div class="col-md-1">
-                                <label class="form-label fw-semibold">Bulan</label>
-                                <select name="bulan" class="form-select">
-                                    <option value="">-</option>
-                                    <?php for($i=1;$i<=12;$i++) echo "<option>$i</option>"; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label class="form-label fw-semibold">Triwulan</label>
-                                <select name="triwulan" class="form-select">
-                                    <option value="">-</option>
-                                    <option>1</option><option>2</option><option>3</option><option>4</option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Keterangan</label>
-                                <textarea name="keterangan" class="form-control" rows="2" placeholder="Opsional"></textarea>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" name="simpan" class="btn btn-save"><i class="fas fa-save me-2"></i> Simpan Data</button>
-                            </div>
+            <div class="card-body-modern">
+                <form method="post">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Nama Program Kerja</label>
+                            <input type="text" name="nama_program" class="form-control" placeholder="Contoh: Peningkatan Pelayanan Publik" required>
                         </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Riwayat Capaian -->
-            <div class="card-modern">
-                <div class="card-header-info">
-                    <i class="fas fa-history me-2"></i> Riwayat Capaian <?= htmlspecialchars($opd) ?>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Program</th>
-                                    <th>Target</th>
-                                    <th>Realisasi</th>
-                                    <th>Capaian</th>
-                                    <th>Tahun</th>
-                                    <th>Bulan</th>
-                                    <th>Triwulan</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php while($row = mysqli_fetch_assoc($data)): 
-                                    $capaian = ($row['realisasi']/$row['target'])*100;
-                                    $persenClass = $capaian>=80 ? 'persen-success' : ($capaian>=60 ? 'persen-warning' : 'persen-danger');
-                                ?>
-                                <tr>
-                                    <td class="fw-semibold"><?= htmlspecialchars($row['nama_program']) ?></td>
-                                    <td><?= $row['target'] ?></td>
-                                    <td><?= $row['realisasi'] ?></td>
-                                    <td><span class="persen <?= $persenClass ?>"><?= round($capaian,1) ?>%</span></td>
-                                    <td><?= $row['tahun'] ?></td>
-                                    <td><?= $row['bulan'] ?: '-' ?></td>
-                                    <td><?= $row['triwulan'] ?: '-' ?></td>
-                                    <td>
-                                        <form method="post" style="display:inline-block" class="d-flex gap-1">
-                                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                                            <input type="number" name="realisasi" placeholder="Realisasi baru" required style="width:85px; border-radius:30px; border:1px solid #ccc; padding:4px 8px;">
-                                            <button type="submit" name="edit" class="btn btn-edit btn-sm"><i class="fas fa-pen"></i></button>
-                                        </form>
-                                        <a href="?hapus=<?= $row['id'] ?>" class="btn btn-delete btn-sm" onclick="return confirm('Yakin hapus data ini?')"><i class="fas fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                                <?php endwhile; ?>
-                            </tbody>
-                        </table>
+                        <div class="col-md-2">
+                            <label class="form-label">Target Nilai</label>
+                            <input type="number" name="target" class="form-control" placeholder="Target" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Realisasi Nilai</label>
+                            <input type="number" name="realisasi" class="form-control" placeholder="Realisasi" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Tahun Anggaran</label>
+                            <input type="number" name="tahun" class="form-control" placeholder="Tahun" value="2024" required>
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label">Bulan</label>
+                            <select name="bulan" class="form-select">
+                                <option value="">-</option>
+                                <?php for($i=1;$i<=12;$i++) echo "<option>$i</option>"; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label">Triwulan</label>
+                            <select name="triwulan" class="form-select">
+                                <option value="">-</option>
+                                <option>1</option><option>2</option><option>3</option><option>4</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Keterangan Tambahan</label>
+                            <textarea name="keterangan" class="form-control" rows="2" placeholder="Opsional (contoh: hambatan atau detail tambahan)"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" name="simpan" class="btn btn-save">
+                                <i class="fas fa-save"></i> Simpan Data Capaian
+                            </button>
+                        </div>
                     </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Riwayat Capaian -->
+        <div class="card-modern">
+            <div class="card-header-modern">
+                <i class="fas fa-history"></i> Riwayat Capaian <?= htmlspecialchars($opd) ?>
+            </div>
+            <div class="card-body-modern p-0">
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Nama Program</th>
+                                <th style="width: 100px; text-align: right;">Target</th>
+                                <th style="width: 100px; text-align: right;">Realisasi</th>
+                                <th style="width: 100px; text-align: center;">Capaian</th>
+                                <th style="width: 80px; text-align: center;">Tahun</th>
+                                <th style="width: 70px; text-align: center;">Bulan</th>
+                                <th style="width: 90px; text-align: center;">Triwulan</th>
+                                <th style="width: 180px; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (mysqli_num_rows($data) == 0): ?>
+                                <tr>
+                                    <td colspan="8" class="text-center py-4 text-muted">Belum ada data capaian yang tersimpan.</td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php while($row = mysqli_fetch_assoc($data)): 
+                                $capaian = ($row['target'] > 0) ? ($row['realisasi']/$row['target'])*100 : 0;
+                                $statusClass = $capaian>=80 ? 'status-success' : ($capaian>=60 ? 'status-warning' : 'status-danger');
+                            ?>
+                            <tr>
+                                <td class="fw-semibold text-dark"><?= htmlspecialchars($row['nama_program']) ?></td>
+                                <td class="text-right font-monospace" style="text-align: right;"><?= number_format($row['target']) ?></td>
+                                <td class="text-right font-monospace" style="text-align: right;"><?= number_format($row['realisasi']) ?></td>
+                                <td class="text-center"><span class="status-badge <?= $statusClass ?>"><?= round($capaian,1) ?>%</span></td>
+                                <td class="text-center fw-medium text-secondary"><?= $row['tahun'] ?></td>
+                                <td class="text-center fw-medium text-secondary"><?= $row['bulan'] ?: '-' ?></td>
+                                <td class="text-center fw-medium text-secondary"><?= $row['triwulan'] ? 'TW ' . $row['triwulan'] : '-' ?></td>
+                                <td class="text-center">
+                                    <form method="post" style="display:inline-block" class="d-inline-flex gap-1 align-items-center">
+                                        <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                        <input type="number" name="realisasi" placeholder="Realisasi baru" required class="edit-input">
+                                        <button type="submit" name="edit" class="btn btn-action-edit" title="Perbarui Realisasi">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                    <a href="?hapus=<?= $row['id'] ?>" class="btn btn-action-delete ms-1" onclick="return confirm('Apakah Anda yakin ingin menghapus data capaian program ini?')" title="Hapus Data">
+                                        <i class="fas fa-trash-can"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
-            <footer>
-                <i class="fas fa-database me-1"></i> Data tersimpan di MySQL dan tersinkronasi real-time ke MongoDB • Dashboard Eksekutif terupdate otomatis
-            </footer>
         </div>
+
+        <footer>
+            <div class="text-muted">
+                <i class="fas fa-database me-1"></i> Data tersimpan di MySQL dan disinkronkan ke MongoDB • SiMonik LA
+            </div>
+        </footer>
     </div>
 </div>
 </body>
